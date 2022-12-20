@@ -12,15 +12,6 @@ import { LeafletEventHandlerFnMap } from "leaflet";
 
 function SetViewOnClick({ animateRef }) {
 
-    const [latlongFormData, setlatlongFormData] = useState({
-        lat: "",
-        long: ""
-    })
-
-    const { lat, long } = latlongFormData
-
-
-
     const map = useMapEvent('click', (e) => {
         map.setView(e.latlng, map.getZoom(), {
             animate: animateRef.current || false,
@@ -33,8 +24,11 @@ function SetViewOnClick({ animateRef }) {
 
 
 function Home() {
-    const animateRef = useRef()
-    console.log("MAP REF: ", animateRef);
+
+
+
+    const mapRef = useRef()
+    console.log("MAP REF: ", mapRef);
 
     const markerIcon = L.icon({
         iconUrl: require("../images/icons/location.png"),
@@ -61,6 +55,10 @@ function Home() {
         console.log("Submitting");
         console.log("LAT: ", parseFloat(lat), " LONG: ", parseFloat(long));
         setPosition([parseFloat(lat), parseFloat(long)])
+        console.log("mapRef.current: ", mapRef.current);
+        console.log("mapRef.current._leaflet_id: ", mapRef.current.leafletElement);
+
+        console.log(mapRef.current.setView([parseFloat(lat), parseFloat(long)], 13));
 
     }
 
@@ -74,7 +72,7 @@ function Home() {
     return (
         <div className="map">
 
-            <MapContainer center={position} zoom={13} scrollWheelZoom={true} style={{ height: "500px", width: "70%" }}>
+            <MapContainer ref={mapRef} center={position} zoom={13} scrollWheelZoom={true} style={{ height: "500px", width: "70%" }}>
 
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -85,7 +83,6 @@ function Home() {
                         A pretty CSS3 popup. <br /> Easily customizable.
                     </Popup>
                 </Marker>
-                <SetViewOnClick animateRef={animateRef} />
             </MapContainer>
 
             <form action="" onSubmit={submitLatLong} className="login-form">
